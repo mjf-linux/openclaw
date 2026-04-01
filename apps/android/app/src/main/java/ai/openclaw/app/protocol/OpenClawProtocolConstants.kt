@@ -14,6 +14,7 @@ enum class OpenClawCapability(val rawValue: String) {
   Calendar("calendar"),
   Motion("motion"),
   CallLog("callLog"),
+  HealthConnect("healthConnect"),
 }
 
 enum class OpenClawCanvasCommand(val rawValue: String) {
@@ -127,6 +128,18 @@ enum class OpenClawCalendarCommand(val rawValue: String) {
 
   companion object {
     const val NamespacePrefix: String = "calendar."
+  }
+}
+
+enum class OpenClawHealthConnectCommand(val rawValue: String) {
+  Weight("health.weight"),
+  BodyFat("health.bodyFat"),
+  Nutrition("health.nutrition"),
+  Steps("health.steps"),
+  ;
+
+  companion object {
+    const val NamespacePrefix: String = "health."
   }
 }
 

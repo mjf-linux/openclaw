@@ -9,6 +9,7 @@ import ai.openclaw.app.protocol.OpenClawCallLogCommand
 import ai.openclaw.app.protocol.OpenClawContactsCommand
 import ai.openclaw.app.protocol.OpenClawDeviceCommand
 import ai.openclaw.app.protocol.OpenClawLocationCommand
+import ai.openclaw.app.protocol.OpenClawHealthConnectCommand
 import ai.openclaw.app.protocol.OpenClawMotionCommand
 import ai.openclaw.app.protocol.OpenClawNotificationsCommand
 import ai.openclaw.app.protocol.OpenClawSmsCommand
@@ -25,6 +26,7 @@ class InvokeDispatcher(
   private val contactsHandler: ContactsHandler,
   private val calendarHandler: CalendarHandler,
   private val motionHandler: MotionHandler,
+  private val healthConnectHandler: HealthConnectHandler,
   private val smsHandler: SmsHandler,
   private val a2uiHandler: A2UIHandler,
   private val debugHandler: DebugHandler,
@@ -41,6 +43,7 @@ class InvokeDispatcher(
   private val onCanvasA2uiReset: () -> Unit,
   private val motionActivityAvailable: () -> Boolean,
   private val motionPedometerAvailable: () -> Boolean,
+  private val healthConnectAvailable: () -> Boolean,
 ) {
   suspend fun handleInvoke(command: String, paramsJson: String?): GatewaySession.InvokeResult {
     val spec =
@@ -162,6 +165,12 @@ class InvokeDispatcher(
       OpenClawMotionCommand.Activity.rawValue -> motionHandler.handleMotionActivity(paramsJson)
       OpenClawMotionCommand.Pedometer.rawValue -> motionHandler.handleMotionPedometer(paramsJson)
 
+      // Health Connect commands
+      OpenClawHealthConnectCommand.Weight.rawValue -> healthConnectHandler.handleHealthWeight(paramsJson)
+      OpenClawHealthConnectCommand.BodyFat.rawValue -> healthConnectHandler.handleHealthBodyFat(paramsJson)
+      OpenClawHealthConnectCommand.Nutrition.rawValue -> healthConnectHandler.handleHealthNutrition(paramsJson)
+      OpenClawHealthConnectCommand.Steps.rawValue -> healthConnectHandler.handleHealthSteps(paramsJson)
+
       // SMS command
       OpenClawSmsCommand.Send.rawValue -> smsHandler.handleSmsSend(paramsJson)
       OpenClawSmsCommand.Search.rawValue -> smsHandler.handleSmsSearch(paramsJson)
@@ -257,6 +266,15 @@ class InvokeDispatcher(
           GatewaySession.InvokeResult.error(
             code = "PEDOMETER_UNAVAILABLE",
             message = "PEDOMETER_UNAVAILABLE: step counter not available",
+          )
+        }
+      InvokeCommandAvailability.HealthConnectAvailable ->
+        if (healthConnectAvailable()) {
+          null
+        } else {
+          GatewaySession.InvokeResult.error(
+            code = "HEALTH_CONNECT_UNAVAILABLE",
+            message = "HEALTH_CONNECT_UNAVAILABLE: Health Connect not available",
           )
         }
       InvokeCommandAvailability.SendSmsAvailable ->

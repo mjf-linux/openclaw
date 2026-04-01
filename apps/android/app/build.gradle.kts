@@ -216,6 +216,9 @@ dependencies {
     implementation("org.commonmark:commonmark-ext-gfm-tables:0.27.1")
     implementation("org.commonmark:commonmark-ext-task-list-items:0.27.1")
 
+    // Health Connect (for node.invoke health.* commands)
+    implementation("androidx.health.connect:connect-client:1.1.0-alpha12")
+
     // CameraX (for node.invoke camera.* parity)
     implementation("androidx.camera:camera-core:1.5.2")
     implementation("androidx.camera:camera-camera2:1.5.2")

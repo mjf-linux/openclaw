@@ -8,6 +8,7 @@ import ai.openclaw.app.protocol.OpenClawCapability
 import ai.openclaw.app.protocol.OpenClawCallLogCommand
 import ai.openclaw.app.protocol.OpenClawContactsCommand
 import ai.openclaw.app.protocol.OpenClawDeviceCommand
+import ai.openclaw.app.protocol.OpenClawHealthConnectCommand
 import ai.openclaw.app.protocol.OpenClawLocationCommand
 import ai.openclaw.app.protocol.OpenClawMotionCommand
 import ai.openclaw.app.protocol.OpenClawNotificationsCommand
@@ -24,6 +25,7 @@ data class NodeRuntimeFlags(
   val voiceWakeEnabled: Boolean,
   val motionActivityAvailable: Boolean,
   val motionPedometerAvailable: Boolean,
+  val healthConnectAvailable: Boolean,
   val debugBuild: Boolean,
 )
 
@@ -36,6 +38,7 @@ enum class InvokeCommandAvailability {
   CallLogAvailable,
   MotionActivityAvailable,
   MotionPedometerAvailable,
+  HealthConnectAvailable,
   DebugBuild,
 }
 
@@ -47,6 +50,7 @@ enum class NodeCapabilityAvailability {
   CallLogAvailable,
   VoiceWakeEnabled,
   MotionAvailable,
+  HealthConnectAvailable,
 }
 
 data class NodeCapabilitySpec(
@@ -93,6 +97,10 @@ object InvokeCommandRegistry {
       NodeCapabilitySpec(
         name = OpenClawCapability.CallLog.rawValue,
         availability = NodeCapabilityAvailability.CallLogAvailable,
+      ),
+      NodeCapabilitySpec(
+        name = OpenClawCapability.HealthConnect.rawValue,
+        availability = NodeCapabilityAvailability.HealthConnectAvailable,
       ),
     )
 
@@ -206,6 +214,22 @@ object InvokeCommandRegistry {
         availability = InvokeCommandAvailability.CallLogAvailable,
       ),
       InvokeCommandSpec(
+        name = OpenClawHealthConnectCommand.Weight.rawValue,
+        availability = InvokeCommandAvailability.HealthConnectAvailable,
+      ),
+      InvokeCommandSpec(
+        name = OpenClawHealthConnectCommand.BodyFat.rawValue,
+        availability = InvokeCommandAvailability.HealthConnectAvailable,
+      ),
+      InvokeCommandSpec(
+        name = OpenClawHealthConnectCommand.Nutrition.rawValue,
+        availability = InvokeCommandAvailability.HealthConnectAvailable,
+      ),
+      InvokeCommandSpec(
+        name = OpenClawHealthConnectCommand.Steps.rawValue,
+        availability = InvokeCommandAvailability.HealthConnectAvailable,
+      ),
+      InvokeCommandSpec(
         name = "debug.logs",
         availability = InvokeCommandAvailability.DebugBuild,
       ),
@@ -230,6 +254,7 @@ object InvokeCommandRegistry {
           NodeCapabilityAvailability.CallLogAvailable -> flags.callLogAvailable
           NodeCapabilityAvailability.VoiceWakeEnabled -> flags.voiceWakeEnabled
           NodeCapabilityAvailability.MotionAvailable -> flags.motionActivityAvailable || flags.motionPedometerAvailable
+          NodeCapabilityAvailability.HealthConnectAvailable -> flags.healthConnectAvailable
         }
       }
       .map { it.name }
@@ -247,6 +272,7 @@ object InvokeCommandRegistry {
           InvokeCommandAvailability.CallLogAvailable -> flags.callLogAvailable
           InvokeCommandAvailability.MotionActivityAvailable -> flags.motionActivityAvailable
           InvokeCommandAvailability.MotionPedometerAvailable -> flags.motionPedometerAvailable
+          InvokeCommandAvailability.HealthConnectAvailable -> flags.healthConnectAvailable
           InvokeCommandAvailability.DebugBuild -> flags.debugBuild
         }
       }
