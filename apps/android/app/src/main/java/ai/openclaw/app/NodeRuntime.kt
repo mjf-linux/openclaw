@@ -119,6 +119,10 @@ class NodeRuntime(
     appContext = appContext,
   )
 
+  private val healthConnectHandler: HealthConnectHandler = HealthConnectHandler(
+    appContext = appContext,
+  )
+
   private val smsHandlerImpl: SmsHandler = SmsHandler(
     sms = sms,
   )
@@ -137,6 +141,7 @@ class NodeRuntime(
     voiceWakeMode = { VoiceWakeMode.Off },
     motionActivityAvailable = { motionHandler.isActivityAvailable() },
     motionPedometerAvailable = { motionHandler.isPedometerAvailable() },
+    healthConnectAvailable = { healthConnectHandler.isAvailable() },
     sendSmsAvailable = { BuildConfig.OPENCLAW_ENABLE_SMS && sms.canSendSms() },
     readSmsAvailable = { BuildConfig.OPENCLAW_ENABLE_SMS && sms.canReadSms() },
     callLogAvailable = { BuildConfig.OPENCLAW_ENABLE_CALL_LOG },
@@ -155,6 +160,7 @@ class NodeRuntime(
     contactsHandler = contactsHandler,
     calendarHandler = calendarHandler,
     motionHandler = motionHandler,
+    healthConnectHandler = healthConnectHandler,
     smsHandler = smsHandlerImpl,
     a2uiHandler = a2uiHandler,
     debugHandler = debugHandler,
@@ -175,6 +181,7 @@ class NodeRuntime(
     onCanvasA2uiReset = { _canvasA2uiHydrated.value = false },
     motionActivityAvailable = { motionHandler.isActivityAvailable() },
     motionPedometerAvailable = { motionHandler.isPedometerAvailable() },
+    healthConnectAvailable = { healthConnectHandler.isAvailable() },
   )
 
   data class GatewayTrustPrompt(
